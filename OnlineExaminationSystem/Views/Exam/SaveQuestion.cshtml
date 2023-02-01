@@ -1,0 +1,267 @@
+﻿@{
+    Layout = "_Admin";
+}
+
+
+<table id="tbl" class="table table-bordered">
+    <tr>
+        <td>
+            <table class="table  table-bordered table-striped">
+                <tr>
+                    <td>
+                        <label for="techid" id="slno"></label>
+                    </td>
+                </tr>
+                <tr>
+                    <th colspan="2" align="center">
+                        Question Insert
+                    </th>
+                </tr>
+
+
+                <tr>
+                    <th align="right">Technology Name</th>
+                    <td>
+                        <select asp="techid" id="techid" asp-items="@(new SelectList( ViewBag.Technology,"techid","techname"))" class="form-control">
+                        </select>
+                        <span id="lblError" style="color:red"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <th align="right">Subject Name</th>
+                    <td>
+                        <select asp="subid" id="subid" class="form-control">
+                        </select>
+                        <span id="lblError" style="color:red"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <th align="right">Question</th>
+                    <td>
+                        <textarea id="txtque" type="text" class="form-control" placeholder="Enter Question" onkeypress=" txtChkValidation('txtque')"></textarea>
+                    </td>
+
+                </tr>
+                <tr>
+                    <th align="right">Option 1</th>
+                    <td>
+                        <input id="txtopt1" type="text" class="form-control" placeholder="Option 1" onkeypress="txtChkValidation('txtopt1')" />
+                    </td>
+                </tr>
+                <tr>
+                    <th align="right">Option 2</th>
+                    <td>
+                        <input id="txtopt2" type="text" class="form-control" placeholder="Option 2" onkeypress=" txtChkValidation('txtopt2')" />
+                    </td>
+                </tr>
+                <tr>
+                    <th align="right">Option 3</th>
+                    <td>
+                        <input id="txtopt3" type="text" class="form-control" placeholder="Option 3" onkeypress="txtChkValidation('txtopt3')" />
+                    </td>
+                </tr>
+                <tr>
+                    <th align="right">Option 4</th>
+                    <td>
+                        <input id="txtopt4" type="text" class="form-control" placeholder="Option 4" onkeypress="txtChkValidation('txtopt4')" />
+                    </td>
+                </tr>
+                <tr>
+                    <th align="right">Correct Answar</th>
+                    <td>
+                        <input id="txtans" type="text" class="form-control" placeholder="Answer" onkeypress="txtChkValidation('txtans')" />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td colspan="2" align="right">
+                        <input type="button" id="btn_insert" value="Save" />
+                    </td>
+                </tr>
+            </table>
+
+        </td>
+    </tr>
+</table>
+<table class="table" border="1" bordercolor="green" id="table_quest">
+    <thead>
+        <tr>
+            <th>
+                sl_no
+            </th>
+
+            <th>
+                Tech Name
+            </th>
+            <th>
+                subject Name
+            </th>
+            <th>
+                question
+            </th>
+            <th>
+                option1
+            </th>
+            <th>
+                option2
+            </th>
+            <th>
+                option3
+            </th>
+            <th>
+                option4
+            </th>
+            <th>
+                Answer
+            </th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+
+
+<script type="text/javascript">
+
+
+    $(window).on("load", function () {
+        GetAllQuestion();
+    });
+    function Edit(slno) {
+        alert("edit");
+        $.getJSON("/Exam/GetQuestionById", { Qid: slno }, function (data) {
+            prod = JSON.parse(data);
+            $("#slno").val(prod.slno);
+            $("#techid").val(prod.techid);
+            $("#subid").empty();
+            $.getJSON("/Exam/SubCat_Bind", { catid: prod.techid }, function (data) {
+                data = JSON.parse(data);
+                $.each(data, function (i, subid) {
+                    $("#subid").append(
+                        `<option value=` + subid.Value + `>` + subid.Text + `</option>`
+                    );
+                    $("#subid").val(prod.subid);
+                });
+            });
+            $("#txtque").val(prod.question);
+            $("#txtopt1").val(prod.opt1);
+            $("#txtopt2").val(prod.opt2);
+            $("#txtopt3").val(prod.opt3);
+            $("#txtopt4").val(prod.opt4);
+            $("#txtans").val(prod.ans);
+        });
+    }
+
+    function GetAllQuestion() {
+        $("#table_quest tbody tr").remove();
+
+        $.getJSON("/Exam/GetQuestion", function (data) {
+
+            data = JSON.parse(data);
+            $.each(data, function (i, usr) {
+                $("#table_quest tbody").append(
+                    `<tr><td>` + usr.slno + `</td><td>` + usr.techname + `</td><td>` + usr.subname + `</td><td>` + usr.question + `</td><td>` + usr.opt1 + `</td><td>` + usr.opt2 + `</td><td>` + usr.opt3 + `</td><td>` + usr.opt4 + `</td><td>` + usr.ans + `</td><td><button class="btn btn-primary" onclick="Edit(` + usr.slno + `)">Edit</button>&nbsp;&nbsp;<button class="btn btn-primary" onclick="Delete(` + usr.slno + `)">Delete</button></td></tr>`
+                );
+            });
+        });
+    }
+
+
+
+
+
+
+    $(document).ready(function () {
+        $("#techid").change(function () {
+
+            var id = $(this).val();
+            alert(id);
+
+            $.get("/Exam/SubCat_Bind", { catid: id }, function (data) {
+                data = JSON.parse(data);//////must need to convert json format to readable format
+                var v = "";
+                $.each(data, function (z, v1) {
+                    v += "<option value=" + v1.Value + ">" + v1.Text + "</option>";
+                });
+                $("#subid").html(v);
+            })
+        })
+
+
+
+    })
+
+    $(document).ready(function () {
+
+        $("#btn_insert").click(function () {
+
+            if (txtChkValidation('txtque'), dropDownValidation("techid") == true) {
+                var quest = {
+                    slno: $("#slno").val(),
+
+                    techid: $("#techid").val(),
+                    subid: $("#subid").val(),
+                    question: $("#txtque").val(),
+                    opt1: $("#txtopt1").val(),
+                    opt2: $("#txtopt2").val(),
+                    opt3: $("#txtopt3").val(),
+                    opt4: $("#txtopt4").val(),
+                    ans: $("#txtans").val(),
+                }; 
+                $.getJSON("/Exam/CreateQuestion", quest, function (data) {
+
+                    data = JSON.parse(data);
+                    if (data == 1) {
+                        alert("Question Saved");
+                        GetAllQuestion();
+                        Reset();
+                    } else {
+                        alert("There some error.");
+                    }
+                });
+            } else {
+                alert("Please enter all text Box!.");
+                txtChkValidation('txtque');
+                txtChkValidation('txtopt1');
+                txtChkValidation('txtopt2');
+                txtChkValidation('txtopt3');
+                txtChkValidation('txtopt4');
+                txtChkValidation('txtans');
+                dropDownValidation('techid');
+                dropDownValidation('subid');
+            }
+        });
+    });
+
+    function Reset() {
+        $("#techid").val("");
+        $("#subid").val("");
+        $("#txtque").val("");
+        $("#txtopt1").val("");
+        $("#txtopt2").val("");
+        $("#txtopt3").val("");
+        $("#txtopt4").val("");
+        $("#txtans").val("");
+    }
+
+
+
+    function Delete(slno) {
+        alert("deleteQue");
+        $.post("/Exam/DeleteQue", { vid: slno }, function (data) {      //passing the id of the selected user to the action method for deletion
+            if (data != null) {
+                location.reload();///to refresh page
+                alert("product Deleted");
+                GetAllQuestion();
+            }
+            else {
+                alert("Error");
+            }
+        });
+    }
+
+
+
+</script>

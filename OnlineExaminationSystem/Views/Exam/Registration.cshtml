@@ -1,0 +1,137 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<table id="tbl" class="table table-bordered">
+    <tr>
+        <td align="justify">
+            @*@Html.Partial("View")*@
+
+        </td>
+        <td>
+            <table class="table  table-bordered table-striped">
+                <tr>
+                    <th colspan="2" align="justify">
+                        New User Regitration
+                    </th>
+                </tr>
+                <tr>
+                    <th align="right">User ID</th>
+                    <td>
+                        <input id="txtUserID" type="text" class="form-control" placeholder="Enter User ID" onkeypress="txtChkValidation('txtUserID')" />
+                    </td>
+
+                </tr>
+                <tr>
+                    <th align="right">Password</th>
+                    <td>
+                        <input id="txtPasword" type="password" class="form-control" placeholder="Enter Password" onkeypress="txtChkValidation('txtPasword')" />
+                    </td>
+
+                </tr>
+
+                <tr>
+                    <th align="right">User Name</th>
+                    <td>
+                        <input id="txtUserName" type="text" class="form-control" placeholder="Enter your name" onkeypress="txtChkValidation('txtUserName')" />
+                    </td>
+
+                </tr>
+                <tr>
+                    <th align="right">Phone No.</th>
+                    <td>
+                        <input id="txtPhone" type="number" class="form-control" placeholder="Enter your phone number" onkeypress="txtChkValidation('txtPhone')" onchange="Phonevalidate('txtPhone','lblErrorPhone')" />
+                        <span id="lblErrorPhone" style="color:red"></span>
+                    </td>
+
+                </tr>
+                <tr>
+                    <th align="right">Email</th>
+                    <td>
+                        <input id="txtemail" type="email" class="form-control" placeholder="Enter your email" onkeypress="txtChkValidation('txtemail')" onchange="emailValidate('txtemail','lblError')" />
+                        <span id="lblError" style="color:red"></span>
+                    </td>
+
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-group">
+                            select Technolodgy
+                            <select id="techid" asp-items="@(new SelectList(ViewBag.techid,"techid","techname"))" class="form-control">
+                            </select>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-group">
+                            select Subject
+                            <select id="subid" class="form-control">
+                            </select>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="right">
+                        <input type="button" id="btn_reg" value="submit" />
+                    </td>
+                </tr>
+            </table>
+
+        </td>
+    </tr>
+</table>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#techid").change(function () {
+
+            var id = $(this).val();
+            alert(id);
+
+            $.get("/Exam/SubCat_Bind", { catid: id }, function (data) {
+                data = JSON.parse(data);//////must need to convert json format to readable format
+                var v = "";
+                $.each(data, function (z, v1) {
+                    v += "<option value=" + v1.Value + ">" + v1.Text + "</option>";
+                });
+                $("#subid").html(v);
+            })
+        })
+
+
+
+    })
+
+    $(document).ready(function () {
+
+
+        $("#btn_reg").click(function () {
+            alert("btn_regis");
+            var login = {
+                userid: $("#txtUserID").val(),
+                userpassword: $("#txtPasword").val(),
+                username: $("#txtUserName").val(),
+                userphone: $("#txtPhone").val(),
+                useremail: $("#txtemail").val(),
+
+                usertechnology: $("#techid").val(),
+                usersubject: $("#subid").val(),
+
+            };
+
+            $.getJSON("/Exam/UserCreat", login, function (data) {
+
+                data = JSON.parse(data);
+                if (data == 1) {
+                    alert("User Create. Please go to login Page");
+                    Reset();
+                } else {
+                    alert("UserID already Registered.");
+                }
+            });
+
+        });
+    });
+</script>

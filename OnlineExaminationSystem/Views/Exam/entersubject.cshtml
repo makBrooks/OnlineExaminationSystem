@@ -1,0 +1,120 @@
+﻿@{
+    Layout = "_Admin";
+}
+
+
+<h1>entersubject</h1>
+<table>
+    <tr>
+        <td>
+            <label id="subid"></label>
+        </td>
+    </tr>
+
+    <tr>
+        <td>
+            <div class="form-group">
+                select Technolodgy
+                <select id="techid" asp-items="@(new SelectList(ViewBag.techid,"techid","techname"))" class="form-control">
+                </select>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <th align="right">Enter Subject</th>
+        <td>
+            <input id="subname" type="text" class="form-control" placeholder="Enter subject" onkeypress="txtChkValidation('subname')" />
+        </td>
+
+    </tr>
+    <tr>
+        <td colspan="2" align="right">
+            <input type="button" id="btn_reg" value="submit" />
+        </td>
+    </tr>
+</table>
+
+<table class="table" id="table_user">
+    <thead>
+        <tr>
+            <th>
+                sub ID
+            </th>
+            <th>
+                Tech Name
+            </th>
+            <th>
+                subject Name
+            </th>
+
+            <th>
+                Action
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+<script type="text/javascript">
+    $(window).on("load", function () {
+
+        fillsubtable();
+
+
+    });
+
+    $("#btn_reg").click(function () {
+
+        var prod = { subid: $("#subid").val(),techid: $("#techid").val(), subname: $("#subname").val() };
+        $.post("/Exam/entersubjectt", prod, function () {
+            data = JSON.parse(data);
+            debugger
+            if (data == 1) {
+                alert("insert successfull");
+                fillsubtable();
+                Reset();
+            } else {
+                alert("failed");
+            }
+
+        })
+    });
+
+    function fillsubtable() {
+        $("#table_user tbody tr").remove();
+
+
+        $.getJSON("/Exam/GetAllsub", function (data) {
+
+            data = JSON.parse(data);
+            $.each(data, function (i, usr) {
+                $("#table_user tbody").append(
+                    `<tr><td>` + usr.subid + `</td><td>` + usr.techname + `</td><td>` + usr.subname + `</td><td><button class="btn btn-primary" onclick="Edit(` + usr.subid + `)">Edit</button><button class="btn btn-primary" onclick="Delete(` + usr.subid + `)">Delete</button></td></tr>`
+                );
+            });
+        });
+    }
+
+    function Delete(subid) {
+        $.post("/Exam/Deletesubject", { vid: subid }, function (data) {      //passing the id of the selected user to the action method for deletion
+            if (data != null) {
+                location.reload();///to refresh page
+                alert("subject Deleted");
+                fillsubtable();
+
+            }
+            else {
+                alert("Error");
+            }
+        });
+    }
+    function Edit(subid) {
+        $.getJSON("/Exam/GetSubjectById", { id: subid }, function (data) {
+            prod = JSON.parse(data);
+            $("#subid").val(prod.subid),
+                $("#techid").val(prod.techid),
+                $("#subname").val(prod.subname);
+        });
+    }
+
+</script>

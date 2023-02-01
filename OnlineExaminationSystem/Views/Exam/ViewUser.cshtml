@@ -1,0 +1,77 @@
+﻿
+@model IEnumerable<OnlineExaminationSystem.Models.UserEntity>
+
+@{
+    Layout = "_Admin";
+}
+
+<h1>Pending Users</h1>
+
+<p>
+
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                UserId
+
+            <th>
+                UserName
+            </th>
+            <th>
+                Phone
+            <th>
+                Email
+            </th>
+
+            <th>
+                Technology
+            </th>
+            <th>
+                Subject
+            </th>
+            <th>
+                Status
+            </th>
+
+            <th>Pending/Approve</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.userid)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.username)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.userphone)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.useremail)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.techname)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.subname)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.userstatus)
+                </td>
+
+
+                <td>
+                    @Html.ActionLink("Approve", "GetApprove", new { id = item.userid }) |
+
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

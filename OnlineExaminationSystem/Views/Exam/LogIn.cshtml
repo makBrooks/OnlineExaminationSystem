@@ -1,0 +1,63 @@
+﻿@{
+    ViewData["Title"] = "login";
+}
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $("#btnLogin").click(function () {
+            var login = {
+                UserId: $("#txtUserID").val(),
+                Passwd: $("#txtPasword").val(),
+            };
+            $.getJSON("/Exam/UserLogin", login, function (data) {
+
+                if (data == 2) {
+                    alert("Login Success");
+                    window.location.href = '/Exam/AdminDashboard/';
+                }
+                else if (data == 3) {
+                    alert("Login Success");
+                    window.location.href = '/Exam/UserDashboard/';
+                }
+                else {
+                    alert("Check your User ID and Password");
+                }
+            });
+        });
+    });
+</script>
+<div id="divTag">
+    <table id="tbl" class="table table-bordered">
+        <tr>
+            <td>
+                <table class="table  table-striped">
+                    <tr>
+                        <th colspan="2" align="justify"> Login</th>
+                    </tr>
+                    <tr>
+                        <th align="right">User ID</th>
+                        <td>
+                            <input id="txtUserID" type="text" class="form-control" placeholder="Enter User ID" required />
+                        </td>
+
+                    </tr>
+                    <tr>
+                        <th align="right">Password</th>
+                        <td>
+                            <input id="txtPasword" type="password" class="form-control" placeholder="Enter Password" required />
+                        </td>
+
+                    </tr>
+                    <tr>
+                        <td colspan="2" align="right">
+                            <input type="button" id="btnLogin" value="Login" />
+                        </td>
+                    </tr>
+                </table>
+
+            </td>
+        </tr>
+    </table>
+
+</div>

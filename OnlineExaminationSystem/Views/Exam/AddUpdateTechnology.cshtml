@@ -1,0 +1,115 @@
+﻿@{
+    Layout = "_Admin";
+}
+
+
+<table id="tbl" class="table table-bordered">
+    <tr>
+        <td>
+            <table class="table  table-bordered table-striped">
+                <tr>
+                    <th colspan="2" align="center">
+                        Technology Insert
+                    </th>
+                </tr>
+                <tr>
+                    <th align="right">Technology Name</th>
+                    <td>
+                        <input id="txttechid" type="text" class="form-control" hidden placeholder="Enter Technology Name" onkeypress="txtChkValidation('txttechname')" />
+                        <input id="txttechname" type="text" class="form-control" placeholder="Enter Technology Name" onkeypress="txtChkValidation('txttechname')" />
+                    </td>
+
+                </tr>
+                <tr>
+                    <td colspan="2" align="right">
+                        <input type="button" id="btn_insert" value="Insert" />
+                    </td>
+                </tr>
+            </table>
+
+        </td>
+    </tr>
+</table>
+
+
+<table class="table" id="table_tech">
+    <thead>
+        <tr>
+            <th>
+                Technology ID
+            </th>
+            <th>
+                Technology Name
+            </th>
+            <th>
+                Action
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script type="text/javascript">
+
+    $(window).on("load", function () {
+        GetAllTechnology();
+    });
+
+    $(document).ready(function () {
+        $("#btn_insert").click(function () {
+            if (txtChkValidation('txttechname') == true) {
+                var tech = {
+                    TechId: $("#txttechid").val(),
+                    TechName: $("#txttechname").val(),
+                };
+                $.getJSON("/Exam/InsertTechnology", tech, function (data) {
+
+                    data = JSON.parse(data);
+                    if (data == 1) {
+                        alert("Technology Created");
+                        GetAllTechnology();
+                        Reset();
+                    } else {
+                        alert("There some error.");
+                    }
+                });
+            } else {
+                alert("Please enter all text Box!.");
+                txtChkValidation('txttechname');
+            }
+        });
+    });
+
+    function GetAllTechnology() {
+        $("#table_tech tbody tr").remove();
+
+        $.getJSON("/Exam/GetTechnology", function (data) {
+
+            data = JSON.parse(data);
+            $.each(data, function (i, usr) {
+                $("#table_tech tbody").append(
+                    `<tr><td>` + usr.techid + `</td><td>` + usr.techname + `</td><td><button class="btn btn-primary" onclick="Edit(` + usr.techid + `)">Edit</button>&nbsp;&nbsp;<button class="btn btn-primary" onclick="Delete(` + usr.techid + `)">Delete</button></td></tr>`
+                );
+            });
+        });
+    }
+    function Reset() {
+        $("#txttechname").val("");
+    }
+
+    function Edit(techid) {
+        $.getJSON("/Exam/GetTechnologyById", { id: techid }, function (data) {
+            prod = JSON.parse(data);
+            $("#txttechid").val(prod.techid),
+                $("#txttechname").val(prod.techname);
+        });
+    }
+
+    function Delete(techid) {
+        $.post("/Exam/DeleteTech", { id: techid }, function () {
+            GetAllTechnology();
+        });
+    }
+</script>

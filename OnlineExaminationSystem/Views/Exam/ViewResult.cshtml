@@ -1,0 +1,62 @@
+﻿@model OnlineExaminationSystem.Models.UserEntity
+
+@{
+    ViewData["Title"] = "ViewResult";
+    Layout = "_User";
+}
+
+<h1>ViewResult</h1>
+
+<div>
+    <h4>UserEntity</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            Name :
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.username)
+        </dd>
+
+        <dt class="col-sm-2">
+            Technology :
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.techname)
+        </dd>
+        <dt class="col-sm-2">
+            Subject :
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.subname)
+        </dd>
+
+        <dt class="col-sm-2">
+            Question Appered:
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Appeared)
+        </dd>
+        <dt class="col-sm-2">
+            Correct Answer:
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Mark)
+        </dd>
+        <dt class="col-sm-2">
+            Mark secured :
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Mark)
+        </dd>
+        <dt class="col-sm-2">
+            Total Question :
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.noofque)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="GetPdf" asp-controller="Exam">Download</a>
+</div>

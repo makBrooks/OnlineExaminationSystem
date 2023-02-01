@@ -1,0 +1,58 @@
+﻿@model IEnumerable<OnlineExaminationSystem.Models.UserEntity>
+
+@{
+    ViewData["Title"] = "ViewAllResult";
+    Layout = "_Admin";
+}
+
+<h1>ViewAllResult</h1>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                User Name
+            </th>
+            <th>
+                Date of Exam
+            </th>
+            <th>
+                Technology
+            </th>
+            <th>
+                Subject
+            </th>
+            <th>
+                Mark
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+<tr>
+    <td>
+        @Html.DisplayFor(modelItem => item.userid)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.doe)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.techname)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.subname)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Mark)
+    </td>
+    <td>
+        @Html.ActionLink("Approve For Download", "Approvecertificate", new { id = item.userid })
+    </td>
+</tr>
+}
+    </tbody>
+</table>
+

@@ -1,0 +1,125 @@
+﻿
+@{
+    ViewData["Title"] = "giveExam";
+    Layout = "_User";
+}
+
+<h1>giveExam</h1>
+
+<table id="table_quest" class="table  table-bordered table-striped">
+    <thead>
+        <tr>
+            <th colspan="2" align="justify">
+                <h3 class="active">Name:- @ViewBag.userName   |  Technology:-@ViewBag.techname   |    Subjects:-@ViewBag.subname</h3>
+                <h4>Time Left : <label id="safeTimerDisplay"></label></h4>
+            </th>
+        </tr>
+
+        <tr>
+            <th colspan="2">
+                <label id="id" class="form-control"></label>
+                <label id="qid" class="form-control"></label>
+                <label id="time"  class="form-control"></label>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+
+</table>
+@*<button class="btn btn-primary" id="submit">Submit</button>*@
+<script type="text/javascript">
+    $(window).on("load", function () {
+
+        GetAllQuestion();
+        GetTime();
+        
+    });
+    function GetTime() {
+        $("#time").remove();
+
+        $.getJSON("/Exam/getTime", function (data) {
+            var time = 60 * data,
+                display = document.querySelector('#safeTimerDisplay');
+            startTimer(time, display);
+
+        });
+    }
+    function startTimer(duration, display) {
+        var timer = duration, minutes, seconds;
+        setInterval(function () {
+            minutes = parseInt(timer / 60, 10)
+            seconds = parseInt(timer % 60, 10);
+
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            seconds = seconds < 10 ? "0" + seconds : seconds;
+
+            display.textContent = minutes + ":" + seconds;
+
+            if (--timer < 0) {
+                timer = 0;
+            }
+            if (timer == 0) {
+                window.location.href = '/Exam/ViewResult/';
+            }
+        }, 1000);
+    }
+    function GetAllQuestion() {
+        $("#table_quest tbody tr").remove();
+
+        $.getJSON("/Exam/BindQuestion", function (data) {
+            if (data != 4) {
+                prd = JSON.parse(data);
+                $("#table_quest tbody").append(
+                    `<tr><td colspan="2">` + prd.question + `</td></tr> + <tr><td><input name="opt" type="radio" class="opt1"  value="` + prd.opt1 + `" />` + prd.opt1 + `
+                    </td>+<td><input type="radio" name="opt" class="opt1" value="` + prd.opt2 + `" />` + prd.opt2 + `</td></tr> + <tr><td><input type="radio" name="opt" class="opt1" value="` + prd.opt3 + `" />` +
+                    prd.opt3 + `</td>+<td><input type="radio" name="opt" class="opt1" value="` + prd.opt4 + `"/>` + prd.opt4 +
+                    `</td></tr> + <tr><td colspan="2"><button class="btn btn-primary" id="pnext" onclick="save();Next();">Next</button></td></tr>`);
+
+                $("#qid").val(prd.slno);
+            }
+            else {
+                alert("you Have already Give The Exam");
+                window.location.href = '/Exam/Userwl/';
+            }
+        });
+    }
+    function Next() {
+        $("#table_quest tbody tr").remove();
+        $.getJSON("/Exam/BindQuestion", function (data) {
+            if (data == 3) {
+                //$("#table_quest").hide();
+                //$("#qid").show();
+                //$("#submit").show();
+                window.location.href = '/Exam/ViewResult/';
+            }
+            prd = JSON.parse(data);
+            // $.each(data, function (i, prd) {
+            $("#table_quest tbody").append(
+                `<tr><td colspan="2">` + prd.question + `</td></tr> + <tr><td><input name="opt" type="radio" class="opt1"` + ` value=` + prd.opt1 + ` />` + prd.opt1 +
+                `</td>+<td><input type="radio" name="opt" class="opt1"` + ` value=` + prd.opt2 + ` />` + prd.opt2 + `</td></tr> + <tr><td><input type="radio" name="opt" class="opt1"` + ` value="` + prd.opt3 + `" />` +
+                prd.opt3 + `</td>+<td><input type="radio" name="opt" class="opt1"` + ` value="` + prd.opt4 + `"/>` + prd.opt4 +
+                `</td></tr> + <tr><td colspan="2"><button class="btn btn-primary" id="pnext" onclick="save();Next();">Next</button></td></tr>`);
+            $("#qid").val(prd.slno);
+            //});
+        });
+    }
+    $(document).ready(function () {
+        $("#submit").click(function () {
+            window.location.href = '/Exam/ViewResult/';
+        });
+    });
+    function save() {
+        var data = {
+            optchoose: $(".opt1:checked").val(),
+            qid: $("#qid").val(),
+        };
+        $.post("/Exam/InsertResult", data, function (data) {
+            if (data == 1) {
+                alert("Answer saved");
+            }
+        });
+    }
+</script>
+
+
